@@ -19,19 +19,19 @@ class pedidoPage {
     
 
     //Métodos
-    realizarPedido(produto, tamanho, cor, quantidade){
-        this.campoBuscar().type(produto)
+    realizarPedido(nome, tamanho, cor, quantidade){
+        this.campoBuscar().clear().type(nome)
         this.botaoBuscar().click()
         this.tamanho(tamanho).click()
         this.cor(cor).click()
-        this.campoQuantidade().type(quantidade)
+        this.campoQuantidade().clear().type(quantidade)
         this.botaoComprar.click()
     }
 
-    verificarCarrinho(produto, tamanho, cor, quantidade){
+    verificarCarrinho(nome, tamanho, cor, quantidade){
         this.botaoVerCarrinho.click()
-        cy.contains(produto + ' - ' + tamanho + ', ' + cor).should('exist')
-        cy.contains(produto + ' - ' + tamanho + ', ' + cor).siblings('.qty').should('equal', quantidade)
+        cy.contains(nome + ' - ' + tamanho + ', ' + cor).should('exist')
+        cy.contains(nome + ' - ' + tamanho + ', ' + cor).siblings('.qty').should('equal', quantidade)
     }
 
     concluirCompra(){
