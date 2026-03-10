@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 
 import pedidoPage from "../support/page_objects/pedido.page";
-//const produtos = require("../fixtures/produtos.json");
-
+const produtos = require("../fixtures/produtos.json");
+import perfil from "../fixtures/perfil.json"
 
 
 context('Exercicio - Testes End-to-end - Fluxo de pedido', () => {
@@ -15,7 +15,9 @@ context('Exercicio - Testes End-to-end - Fluxo de pedido', () => {
         E validando minha compra ao final */
 
     beforeEach(() => {
-        cy.visit('/produtos')
+        cy.visit('minha-conta')
+        cy.login(perfil.usuario, perfil.senha)
+        cy.visit('produtos')
     });
 
     it('Deve fazer um pedido na loja Ebac Shop de ponta a ponta', () => {
@@ -27,8 +29,8 @@ context('Exercicio - Testes End-to-end - Fluxo de pedido', () => {
                 //cy.contains('Comprar').click()
                 cy.get('[name="s"]').eq(1).type(prod.nome)
                 cy.get('.button-search').eq(1).click()
-                cy.get('[title="'+ prod.tamanho +'"]').click()
-                cy.contains(prod.cor).click()
+                cy.get('[title="' + prod.tamanho + '"]').click()
+                cy.get('[title="' + prod.cor + '"]').click()
                 cy.get('.input-text').clear().type(prod.quantidade)
 
                 //pedidoPage.realizarPedido(prod.nome, prod.tamanho, prod.cor, prod.quantidade)
@@ -40,6 +42,20 @@ context('Exercicio - Testes End-to-end - Fluxo de pedido', () => {
 
         //pedidoPage.concluirCompra()
         //cy.get('.page-title').should('have', 'PEDIDO RECEBIDO')
+    });
+
+    it.only('Deve fazer um pedido na loja Ebac Shop de ponta a ponta', () => {
+        //TODO: Coloque todo o fluxo de teste aqui, considerando as boas práticas e otimizações
+
+        produtos.forEach(prod => {
+            pedidoPage.realizarPedido(prod.nome, prod.tamanho, prod.cor, prod.quantidade)
+            pedidoPage.verificarCarrinho(prod.nome, prod.tamanho, prod.cor, prod.quantidade)
+        })
+
+        pedidoPage.concluirCompra()
+        
+        cy.get('.page-title', {timeout: 10000}).should('have.text', 'Pedido recebido')
+        cy.url().should('include', 'order-received')
     });
 
 
